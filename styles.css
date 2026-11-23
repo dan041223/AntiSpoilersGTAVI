@@ -93,11 +93,9 @@
 /* Ocultar título original */
 .gta6-spoiler-blocked .ytLockupMetadataViewModelTitle,
 .gta6-spoiler-blocked #video-title,
-.gta6-spoiler-blocked a#video-title-link {
-    visibility: none !important;
-}
+.gta6-spoiler-blocked a#video-title-link,
 .gta6-spoiler-blocked .shortsLockupViewModelHostOutsideMetadataEndpoint {
-    visibility: none !important;
+    visibility: hidden !important;
 }
 
 /* Título de sustitución */
@@ -128,4 +126,20 @@
 .gta6-spoiler-video-overlay {
     right: 12px !important;
     width: auto !important;
+}
+
+/* Eliminar el espacio reservado al título original */
+.gta6-spoiler-blocked .ytLockupMetadataViewModelTitle {
+    display: none !important;
+}
+
+/* Evitar que el contenedor del título reserve espacio */
+.gta6-spoiler-blocked .ytLockupMetadataViewModel {
+    gap: 0 !important;
+}
+
+/* Ajustar la altura de las portadas de vídeos normales */
+.gta6-spoiler-video-height-fix {
+    bottom: 12px !important;
+    height: auto !important;
 }

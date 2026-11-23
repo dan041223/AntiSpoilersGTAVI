@@ -76,9 +76,9 @@ function createOverlay(card, thumbnailLink, titleElement) {
     const overlay = document.createElement('div');
     overlay.className = 'gta6-spoiler-overlay';
 
-    // Las tarjetas normales tienen 12 px adicionales en el enlace.
-    if (card.matches('yt-lockup-view-model')) {
-        overlay.classList.add('gta6-spoiler-video-overlay');
+    // Ajustar las dimensiones de las miniaturas normales.
+    if (thumbnailLink.matches('a.ytLockupViewModelContentImage')) {
+        overlay.classList.add('gta6-spoiler-video-height-fix');
     }
 
     const warning = document.createElement('div');
@@ -184,9 +184,63 @@ function scanVideos() {
     });
 }
 
+// Bloquear las vistas previas de vídeos protegidos.
+function blockSpoilerShortPreviews() {
+    const previews = document.querySelectorAll(
+        'ytd-video-preview'
+    );
+
+    previews.forEach(preview => {
+        const link = preview.querySelector(
+            '.ytdVideoPreviewMediaContainerLink'
+        );
+
+        const href = link?.getAttribute('href');
+
+        if (!href) return;
+
+        const videoId = href.match(
+            /(?:[?&]v=|\/shorts\/)([^&/?]+)/
+        )?.[1];
+
+        if (!videoId) return;
+
+        const protectedCards = document.querySelectorAll(
+            '.gta6-spoiler-blocked'
+        );
+
+        const isProtected = [...protectedCards].some(card => {
+            const thumbnailLink = card.querySelector([
+                'a.ytLockupViewModelContentImage',
+                'a.shortsLockupViewModelHostEndpoint.reel-item-endpoint',
+                'a#thumbnail'
+            ].join(','));
+
+            const cardHref = thumbnailLink?.getAttribute('href');
+
+            if (!cardHref) return false;
+
+            const cardVideoId = cardHref.match(
+                /(?:[?&]v=|\/shorts\/)([^&/?]+)/
+            )?.[1];
+
+            return cardVideoId === videoId;
+        });
+
+        if (!isProtected) return;
+
+        const video = preview.querySelector('video');
+
+        if (video && !video.paused) {
+            video.pause();
+        }
+    });
+}
+
 // Detecta los vídeos que YouTube carga dinámicamente.
 const observer = new MutationObserver(() => {
     scanVideos();
+    blockSpoilerShortPreviews();
 });
 
 observer.observe(document.body, {
@@ -196,5 +250,6 @@ observer.observe(document.body, {
 
 // Primera exploración.
 scanVideos();
+blockSpoilerShortPreviews();
 
 console.log('[GTA VI Blocker] Motor iniciado correctamente.');
