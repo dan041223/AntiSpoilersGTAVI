@@ -143,3 +143,10 @@
     bottom: 12px !important;
     height: auto !important;
 }
+
+/* Restaurar la altura completa en recomendaciones laterales */
+ytd-watch-next-secondary-results-renderer
+.gta6-spoiler-video-height-fix {
+    bottom: 0 !important;
+    height: 100% !important;
+}
